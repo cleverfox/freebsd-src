@@ -1,0 +1,162 @@
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.\" Copyright (c) 2026 Vladimir Goncharov <devel@viruzzz.org>
+.\"
+.Dd June 25, 2026
+.Dt SLCAND 8
+.Os
+.Sh NAME
+.Nm slcand
+.Nd serial-line CAN bridge daemon
+.Sh SYNOPSIS
+.Nm
+.Op Fl cov
+.Op Fl b Ar baud
+.Op Fl s Ar code
+.Op Fl y Ar code
+.Op Fl w Ar seconds
+.Ar device
+.Op Ar ifname
+.Nm
+.Op Fl cov
+.Op Fl s Ar code
+.Op Fl y Ar code
+.Op Fl w Ar seconds
+.Fl p Ar port
+.Op Ar ifname
+.Nm
+.Op Fl cov
+.Op Fl s Ar code
+.Op Fl y Ar code
+.Op Fl w Ar seconds
+.Fl t Ar host : Ns Ar port
+.Op Ar ifname
+.Sh DESCRIPTION
+The
+.Nm
+daemon bridges a serial-line CAN
+.Pq Dq slcan
+adapter, or a TCP connection, to a
+.Xr slcan 4
+CAN network interface.
+.Fx
+has no in-kernel slcan line discipline, so the slcan ASCII protocol is handled
+in userspace by
+.Nm
+instead.
+.Pp
+The daemon creates the named CAN interface
+.Pq Ar ifname , default Dv slcan0 ,
+brings it up, opens its backing character device, and then forwards frames in
+both directions: frames an application sends on the interface are encoded as
+slcan ASCII and written to the
+.Ar device ,
+and slcan frames read from the
+.Ar device
+are injected as received frames.
+.Pp
+With
+.Fl p
+or
+.Fl t
+the slcan ASCII stream is carried over TCP instead of a serial port, which lets
+two machines share one virtual CAN bus.
+The channel-setup options
+.Fl o , Fl c , Fl s
+and
+.Fl y
+apply to the TCP link as well, so
+.Nm
+can also drive a real network-attached slcan adapter that listens on a TCP port:
+.Fl o
+sends the open command needed to put such an adapter on-bus.
+A peer
+.Nm
+ignores these commands, so they are harmless when tunnelling
+between two daemons.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl b Ar baud
+Set the serial baud rate
+.Pq default 115200 .
+.It Fl c
+Send a close-channel command to the adapter on exit.
+.It Fl o
+Send an open-channel command to the adapter at startup.
+.It Fl p Ar port
+Act as a TCP server, listening on
+.Ar port .
+.It Fl s Ar code
+Set the nominal CAN bitrate using the adapter bitrate code 0 to 8
+.Pq Dv S0 No = 10 kbit/s ... Dv S6 No = 500 kbit/s ... Dv S8 No = 1 Mbit/s .
+.It Fl t Ar host : Ns Ar port
+Act as a TCP client, connecting to
+.Ar host
+on
+.Ar port .
+If the connection cannot be established or is later lost,
+.Nm
+retries every few seconds, keeping the CAN interface up across the gap.
+.It Fl v
+Be verbose: print each bridged frame to standard output, tagged with the
+interface name and a direction of
+.Dq RX
+(a frame received from the bus) or
+.Dq TX
+(a frame sent to the bus).
+.It Fl w Ar seconds
+Wait up to
+.Ar seconds
+for the serial
+.Ar device
+to appear before giving up.
+This is useful at boot, when a USB adapter may still be enumerating.
+.It Fl y Ar code
+Set the CAN FD data-phase bitrate code, enabling CAN FD on the link.
+.El
+.Sh FILES
+.Bl -tag -width Pa
+.It Pa /dev/slcan Ns Ar N
+character device backing the
+.Xr slcan 4
+interface
+.El
+.Sh EXAMPLES
+Bring up
+.Dv slcan0
+on a USB adapter at 500 kbit/s:
+.Bd -literal -offset indent
+slcand -o -s6 /dev/cuaU0 slcan0
+candump slcan0
+.Ed
+.Pp
+Attach a network-attached slcan adapter that listens on TCP port 2000, at
+500 kbit/s:
+.Bd -literal -offset indent
+slcand -o -s6 -t 192.0.2.10:2000 slcan0
+candump slcan0
+.Ed
+.Pp
+Tunnel a CAN bus between two hosts over TCP:
+.Bd -literal -offset indent
+hostA# slcand -p 29536 slcan0
+hostB# slcand -t hostA:29536 slcan0
+.Ed
+.Sh SEE ALSO
+.Xr can 4 ,
+.Xr slcan 4
+.Sh HISTORY
+The
+.Nm
+daemon first appeared in
+.Fx 16.0 .
+.Sh AUTHORS
+.An Vladimir Goncharov Aq Mt devel@viruzzz.org
+.Sh CAUTION
+The slcan ASCII protocol carries only classic CAN frames unless CAN FD is
+enabled with
+.Fl y ;
+when bridged over TCP the data is unauthenticated, so use it only on trusted
+networks.

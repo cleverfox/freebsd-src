@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# PROVIDE: slcand
+# REQUIRE: FILESYSTEMS
+# KEYWORD: nojail
+#
+# Serial-line CAN bridge.  /etc/rc.conf:
+#   slcand_enable="YES"
+#   slcand_device="/dev/cuaU0"
+#   slcand_ifname="slcan0"
+#   slcand_flags="-w 30"     # wait up to 30s for the (USB) serial device
+#
+. /etc/rc.subr
+
+name="slcand"
+desc="Serial-line CAN bridge daemon"
+rcvar="slcand_enable"
+
+load_rc_config $name
+: ${slcand_enable:="NO"}
+: ${slcand_device:="/dev/cuaU0"}
+: ${slcand_ifname:="slcan0"}
+: ${slcand_flags:=""}
+
+pidfile="/var/run/${name}.pid"
+start_cmd="slcand_start"
+stop_cmd="slcand_stop"
+status_cmd="slcand_status"
+
+slcand_start()
+{
+	if [ -f "${pidfile}" ] && kill -0 "$(cat ${pidfile})" 2>/dev/null; then
+		echo "${name} already running as pid $(cat ${pidfile})."
+		return 1
+	fi
+	echo "Starting ${name}."
+	/usr/sbin/daemon -p "${pidfile}" -t "${name}" \
+	    -o "/var/log/${name}.log" \
+	    /usr/local/sbin/slcand ${slcand_flags} "${slcand_device}" \
+	    "${slcand_ifname}"
+}
+
+slcand_stop()
+{
+	if [ -f "${pidfile}" ]; then
+		echo "Stopping ${name}."
+		kill "$(cat ${pidfile})" 2>/dev/null
+		rm -f "${pidfile}"
+	else
+		echo "${name} not running."
+	fi
+}
+
+slcand_status()
+{
+	if [ -f "${pidfile}" ] && kill -0 "$(cat ${pidfile})" 2>/dev/null; then
+		echo "${name} is running as pid $(cat ${pidfile})."
+	else
+		echo "${name} is not running."
+	fi
+}
+
+run_rc_command "$1"

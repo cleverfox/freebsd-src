@@ -61,6 +61,7 @@ CONFS=	DAEMON \
 	savecore \
 	securelevel \
 	serial \
+	slcand \
 	static_arp \
 	static_ndp \
 	stf \
