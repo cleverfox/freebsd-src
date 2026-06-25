@@ -22,6 +22,7 @@ TESTS_SUBDIRS+=		kqueue
 TESTS_SUBDIRS+=		mac
 TESTS_SUBDIRS+=		mqueue
 TESTS_SUBDIRS+=		net
+TESTS_SUBDIRS+=		netcan
 TESTS_SUBDIRS+=		${_netgraph}
 TESTS_SUBDIRS+=		netinet
 TESTS_SUBDIRS+=		netinet6
