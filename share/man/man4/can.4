@@ -1,0 +1,126 @@
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.\" Copyright (c) 2026 Vladimir Goncharov <devel@viruzzz.org>
+.\"
+.Dd June 25, 2026
+.Dt CAN 4
+.Os
+.Sh NAME
+.Nm CAN
+.Nd Controller Area Network protocol family
+.Sh SYNOPSIS
+.Cd "options CAN"
+.Pp
+.In netcan/can.h
+.In netcan/can/raw.h
+.Ft int
+.Fn socket AF_CAN SOCK_RAW CAN_RAW
+.Sh DESCRIPTION
+The
+.Nm
+protocol family provides access to the Controller Area Network (CAN) bus
+through the socket interface, in a way that is source-compatible with the
+Linux SocketCAN API.
+A CAN frame is exchanged as a whole datagram rather than a byte stream.
+.Pp
+A raw CAN socket is created with
+.Fn socket AF_CAN SOCK_RAW CAN_RAW .
+It is bound to a CAN network interface with
+.Xr bind 2
+using a
+.Vt struct sockaddr_can :
+.Bd -literal -offset indent
+struct sockaddr_can {
+	uint8_t		can_len;	/* sizeof(struct sockaddr_can) */
+	sa_family_t	can_family;	/* AF_CAN */
+	int		can_ifindex;	/* interface index, 0 = all */
+	/* protocol-specific address information */
+};
+.Ed
+.Pp
+A
+.Va can_ifindex
+of zero binds to every CAN interface.
+After a successful
+.Xr bind 2
+the socket may be used with
+.Xr read 2
+and
+.Xr write 2 ,
+or with
+.Xr recvfrom 2
+and
+.Xr sendto 2
+to receive or specify the interface explicitly.
+.Pp
+Frames are described by
+.Vt struct can_frame
+(classic CAN, up to 8 data bytes) or
+.Vt struct canfd_frame
+(CAN FD, up to 64 data bytes); both begin with a 32-bit
+.Va can_id
+that carries the identifier and the
+.Dv CAN_EFF_FLAG ,
+.Dv CAN_RTR_FLAG
+and
+.Dv CAN_ERR_FLAG
+flag bits.
+.Sh SOCKET OPTIONS
+Raw CAN sockets support the following options at level
+.Dv SOL_CAN_RAW ,
+set and retrieved with
+.Xr setsockopt 2
+and
+.Xr getsockopt 2 .
+.Bl -tag -width CAN_RAW_RECV_OWN_MSGS
+.It Dv CAN_RAW_FILTER
+.Pq array of Vt struct can_filter
+Set the receive filter.
+A frame is accepted when
+.Va "(can_id & can_mask) == (filter.can_id & can_mask)"
+for any of the configured filters.
+The match is inverted for a filter whose
+.Va can_id
+has
+.Dv CAN_INV_FILTER
+set.
+The default is a single match-all filter; an empty array receives nothing.
+.It Dv CAN_RAW_ERR_FILTER
+.Pq Vt can_err_mask_t
+Select which error message frames are received.
+.It Dv CAN_RAW_LOOPBACK
+.Pq Vt int , default on
+Control whether locally sent frames are looped back to other sockets.
+.It Dv CAN_RAW_RECV_OWN_MSGS
+.Pq Vt int , default off
+Control whether a socket receives the frames it sent itself.
+.It Dv CAN_RAW_JOIN_FILTERS
+.Pq Vt int , default off
+Require all filters to match instead of any.
+.It Dv CAN_RAW_FD_FRAMES
+.Pq Vt int , default off
+Allow CAN FD frames to be sent and received on the socket.
+.El
+.Sh SEE ALSO
+.Xr socket 2 ,
+.Xr slcan 4 ,
+.Xr vcan 4 ,
+.Xr slcand 8
+.Sh HISTORY
+The
+.Nm
+protocol family first appeared in
+.Fx 16.0 .
+It is derived from the
+.Nx
+.Pa sys/netcan
+implementation and follows the Linux SocketCAN application interface.
+.Sh AUTHORS
+.An Vladimir Goncharov Aq Mt devel@viruzzz.org ,
+based on
+.Nx
+code contributed by
+.An Robert Swindells
+and
+.An Manuel Bouyer .

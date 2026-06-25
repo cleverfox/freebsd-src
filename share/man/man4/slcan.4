@@ -1,0 +1,62 @@
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.\" Copyright (c) 2026 Vladimir Goncharov <devel@viruzzz.org>
+.\"
+.Dd June 25, 2026
+.Dt SLCAN 4
+.Os
+.Sh NAME
+.Nm slcan
+.Nd serial-line CAN network interface
+.Sh SYNOPSIS
+.Cd "options CAN"
+.Pp
+.Nm ifconfig Cm slcan Ns Ar N Cm create
+.Sh DESCRIPTION
+The
+.Nm
+driver provides a CAN network interface whose frames are carried by a
+userspace daemon rather than by a kernel hardware driver.
+Each
+.Nm Ns Ar N
+interface is backed by the character device
+.Pa /dev/slcan Ns Ar N :
+frames transmitted by
+.Xr can 4
+sockets on the interface become readable on the character device, and frames
+written to the character device are delivered to the sockets as received
+frames.
+It is the CAN analogue of
+.Xr tun 4 ,
+and is intended to be driven by
+.Xr slcand 8 ,
+which bridges it to a serial-line CAN
+.Pq Dq slcan
+adapter.
+.Pp
+A
+.Nm
+interface is created with
+.Cm ifconfig slcan Ns Ar N Cm create ,
+or implicitly by
+.Xr slcand 8 .
+The character device may be opened by a single process at a time.
+Both classic and CAN FD frames are supported.
+.Pp
+A
+.Nm
+interface is not IP-capable and carries only CAN frames.
+.Sh SEE ALSO
+.Xr can 4 ,
+.Xr tun 4 ,
+.Xr vcan 4 ,
+.Xr ifconfig 8 ,
+.Xr slcand 8
+.Sh HISTORY
+The
+.Nm
+driver first appeared in
+.Fx 16.0 .
+.Sh AUTHORS
+.An Vladimir Goncharov Aq Mt devel@viruzzz.org

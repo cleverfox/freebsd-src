@@ -1,0 +1,49 @@
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.\" Copyright (c) 2026 Vladimir Goncharov <devel@viruzzz.org>
+.\"
+.Dd June 25, 2026
+.Dt VCAN 4
+.Os
+.Sh NAME
+.Nm vcan
+.Nd virtual Controller Area Network interface
+.Sh SYNOPSIS
+.Cd "options CAN"
+.Pp
+.Nm ifconfig Cm vcan Ns Ar N Cm create
+.Sh DESCRIPTION
+The
+.Nm
+driver provides a virtual CAN network interface with no associated hardware.
+It is the CAN analogue of the loopback interface: every frame transmitted on a
+.Nm
+interface is delivered to all
+.Xr can 4
+sockets bound to that interface.
+It is useful for development and for testing CAN applications without a bus.
+.Pp
+A
+.Nm
+interface is created with
+.Cm ifconfig vcan Ns Ar N Cm create
+and removed with
+.Cm ifconfig vcan Ns Ar N Cm destroy .
+Its MTU is large enough to carry a CAN FD frame, so both classic and FD frames
+are supported.
+.Pp
+A
+.Nm
+interface is not IP-capable and carries only CAN frames.
+.Sh SEE ALSO
+.Xr can 4 ,
+.Xr slcan 4 ,
+.Xr ifconfig 8
+.Sh HISTORY
+The
+.Nm
+driver first appeared in
+.Fx 16.0 .
+.Sh AUTHORS
+.An Vladimir Goncharov Aq Mt devel@viruzzz.org

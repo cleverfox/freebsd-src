@@ -378,6 +378,10 @@
     ..
     net80211
     ..
+    netcan
+        can
+        ..
+    ..
     netgraph
         bluetooth
             include

@@ -76,6 +76,7 @@ SUBDIR=	\
 	${_bytgpio} \
 	${_chvgpio} \
 	cam \
+	can \
 	${_cardbus} \
 	${_carp} \
 	cas \

@@ -46,7 +46,7 @@ PHDRS=	_semaphore.h stdarg.h
 LHDRS=	aio.h errno.h fcntl.h linker_set.h poll.h stdatomic.h stdint.h \
 	syslog.h ucontext.h
 
-LDIRS=	geom net net80211 netgraph netinet netinet6 \
+LDIRS=	geom net net80211 netcan netgraph netinet netinet6 \
 	netipsec netlink netsmb nfs nfsclient nfsserver sys vm
 
 LSUBDIRS=	dev/acpica dev/agp dev/ciss dev/filemon dev/firewire \
@@ -61,6 +61,7 @@ LSUBDIRS=	dev/acpica dev/agp dev/ciss dev/filemon dev/firewire \
 	geom/raid geom/raid3 geom/shsec geom/stripe geom/union geom/virstor \
 	net/altq \
 	net/route \
+	netcan/can \
 	netgraph/netflow \
 	netinet/cc \
 	netinet/netdump \

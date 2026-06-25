@@ -77,6 +77,7 @@ AUDIT		opt_global.h
 BOOTHOWTO	opt_global.h
 BOOTVERBOSE	opt_global.h
 CALLOUT_PROFILING
+CAN		opt_can.h
 CAPABILITIES	opt_capsicum.h
 CAPABILITY_MODE	opt_capsicum.h
 CC_CDG		opt_global.h

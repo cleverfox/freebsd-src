@@ -100,6 +100,7 @@ MAN=	aac.4 \
 	bwi.4 \
 	bwn.4 \
 	${_bytgpio.4} \
+	can.4 \
 	capsicum.4 \
 	cardbus.4 \
 	carp.4 \
@@ -545,6 +546,7 @@ MAN=	aac.4 \
 	simplebus.4 \
 	sis.4 \
 	sk.4 \
+	slcan.4 \
 	${_smartpqi.4} \
 	smb.4 \
 	smbfs.4 \
@@ -617,6 +619,7 @@ MAN=	aac.4 \
 	unionfs.4 \
 	ure.4 \
 	vale.4 \
+	vcan.4 \
 	vga.4 \
 	vge.4 \
 	viapm.4 \

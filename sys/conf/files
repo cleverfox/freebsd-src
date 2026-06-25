@@ -4331,6 +4331,12 @@ net80211/ieee80211_vht.c	optional wlan
 net80211/ieee80211_wds.c	optional wlan
 net80211/ieee80211_xauth.c	optional wlan wlan_xauth
 net80211/ieee80211_alq.c	optional wlan ieee80211_alq
+netcan/can.c			optional can
+netcan/can_domain.c		optional can
+netcan/can_pcb.c		optional can
+netcan/if_can.c			optional can
+netcan/if_vcan.c		optional can
+netcan/if_cantap.c		optional can
 netgraph/bluetooth/common/ng_bluetooth.c optional netgraph_bluetooth
 netgraph/bluetooth/drivers/ubt/ng_ubt.c optional netgraph_bluetooth_ubt usb
 netgraph/bluetooth/drivers/ubt/ng_ubt_intel.c optional netgraph_bluetooth_ubt usb
