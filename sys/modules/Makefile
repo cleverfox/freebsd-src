@@ -252,6 +252,7 @@ SUBDIR=	\
 	${_mac_veriexec_sha512} \
 	${_malo} \
 	${_mana} \
+	mcp2515 \
 	md \
 	mdio \
 	${_mgb} \
