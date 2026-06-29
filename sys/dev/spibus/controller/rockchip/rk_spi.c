@@ -454,6 +454,19 @@ static device_method_t rk_spi_methods[] = {
 	DEVMETHOD(device_attach,	rk_spi_attach),
 	DEVMETHOD(device_detach,	rk_spi_detach),
 
+	/*
+	 * Bus resource relay.  An SPI child (e.g. an MCP2515 with an INT pin)
+	 * may have an FDT GPIO interrupt; bus_if.m defaults alloc_resource to
+	 * null_alloc_resource, so without these a child's SYS_RES_IRQ
+	 * allocation fails ("cannot allocate IRQ").  Pass them to the parent.
+	 */
+	DEVMETHOD(bus_alloc_resource,	bus_generic_alloc_resource),
+	DEVMETHOD(bus_release_resource,	bus_generic_release_resource),
+	DEVMETHOD(bus_activate_resource, bus_generic_activate_resource),
+	DEVMETHOD(bus_deactivate_resource, bus_generic_deactivate_resource),
+	DEVMETHOD(bus_setup_intr,	bus_generic_setup_intr),
+	DEVMETHOD(bus_teardown_intr,	bus_generic_teardown_intr),
+
         /* spibus_if  */
 	DEVMETHOD(spibus_transfer,	rk_spi_transfer),
 
