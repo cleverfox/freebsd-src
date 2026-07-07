@@ -253,6 +253,7 @@ SUBDIR=	\
 	${_malo} \
 	${_mana} \
 	mcp2515 \
+	mcp251xfd \
 	md \
 	mdio \
 	${_mgb} \
